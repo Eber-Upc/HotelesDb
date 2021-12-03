@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.0.3
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 30-11-2021 a las 01:44:48
--- Versión del servidor: 10.4.21-MariaDB
--- Versión de PHP: 8.0.12
+-- Servidor: localhost:3306
+-- Tiempo de generación: 03-12-2021 a las 09:00:03
+-- Versión del servidor: 5.6.45-log
+-- Versión de PHP: 7.4.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `upc_hotel`
+-- Base de datos: `app66744_hoteles`
 --
 
 -- --------------------------------------------------------
@@ -56,18 +56,38 @@ CREATE TABLE `tbl_cliente` (
   `CLIENT_EMAIL` varchar(50) NOT NULL,
   `CLIENT_DOCUMENT` varchar(8) NOT NULL,
   `CLIENT_TELEPHONE` varchar(9) NOT NULL,
-  `CLIENT_AGE` int(11) NOT NULL
+  `CLIENT_AGE` int(11) NOT NULL,
+  `RESERVA` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `tbl_cliente`
 --
 
-INSERT INTO `tbl_cliente` (`CLIENT_ID`, `CLIENT_NAMES`, `CLIENT_APEPAT`, `CLIENT_APEMAT`, `CLIENT_EMAIL`, `CLIENT_DOCUMENT`, `CLIENT_TELEPHONE`, `CLIENT_AGE`) VALUES
-(1, 'José Raúl', 'Perez', 'Torres', 'jr@correo.com', '70403889', '934105671', 25),
-(2, 'Luis José', 'Castillo', 'Salazar', 'lj@correo.com', '70403881', '934105672', 19),
-(3, 'Manuel Milton', 'Alvarado', 'Guerra', 'mm@correo.com', '70403882', '934105673', 33),
-(4, 'Lucas Ángel', 'Ramirez', 'Paz', 'la@correo.com', '70403883', '934105674', 27);
+INSERT INTO `tbl_cliente` (`CLIENT_ID`, `CLIENT_NAMES`, `CLIENT_APEPAT`, `CLIENT_APEMAT`, `CLIENT_EMAIL`, `CLIENT_DOCUMENT`, `CLIENT_TELEPHONE`, `CLIENT_AGE`, `RESERVA`) VALUES
+(1, 'Eber', 'Baldarrago', 'Begazo', 'ebrych@gmail.com', '12345678', '111111111', 0, 16),
+(2, 'José Raúl', 'Perez', 'Torres', 'jr@correo.com', '70403889', '934105671', 25, 0),
+(3, 'jose', 'vallarta', 'ruiz', 'ejemplo@gmail.com', '11111111', '111111111', 0, 16);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbl_estado`
+--
+
+CREATE TABLE `tbl_estado` (
+  `ID_STATUS` int(11) NOT NULL,
+  `DESCRIPTION` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `tbl_estado`
+--
+
+INSERT INTO `tbl_estado` (`ID_STATUS`, `DESCRIPTION`) VALUES
+(1, 'Registrado'),
+(2, 'En Progreso'),
+(3, 'Finalizado');
 
 -- --------------------------------------------------------
 
@@ -128,16 +148,9 @@ CREATE TABLE `tbl_reserva` (
   `CLIENT_ID` int(11) DEFAULT NULL,
   `ROOM_ID` int(11) NOT NULL,
   `USER_ID` int(11) NOT NULL,
-  `DATE_RESERVA` date DEFAULT NULL
+  `DATE_RESERVA` date DEFAULT NULL,
+  `ESTADO` int(11) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `tbl_reserva`
---
-
-INSERT INTO `tbl_reserva` (`DETAIL_ID`, `TOTAL_PRICE`, `ENTRY_DATE`, `DEPARTURE_DATE`, `DETAIL_COMMENT`, `HUESPEDES`, `ADMIN_ID`, `CLIENT_ID`, `ROOM_ID`, `USER_ID`, `DATE_RESERVA`) VALUES
-(15, 136.5, '2021-11-29', '2021-12-03', 'Ninguno', 2, 1, 1, 1, 7, '2021-11-29'),
-(16, 136.5, '2021-11-29', '2021-12-03', 'Ninguno', 2, 1, 1, 1, 7, '2021-11-29');
 
 -- --------------------------------------------------------
 
@@ -210,7 +223,7 @@ CREATE TABLE `tbl_user` (
 --
 
 INSERT INTO `tbl_user` (`USER_ID`, `USER_NAME`, `USER_PASSWORD`, `USER_NAMES`, `USER_APEPAT`, `USER_APEMAT`, `USER_TPODOC`, `USER_NUMDOC`, `USER_DIRECCION`, `USER_DISTRITO`, `USER_PROVINCIA`, `USER_TELEF`, `USER_MAIL`, `ROL_TYPE`, `USER_TOKEN`) VALUES
-(7, 'EE2F5A4D86ED6A795BC9AF9EB9D56717', '202CB962AC59075B964B07152D234B70', 'Eber', 'Begazo', 'Baldarrago', 'Dni', '43744482', 'Jiron Junin 455', 'Magdalena', 'Lima', 'Eber', 'ebrych@gmail.com', 2, '8NgqFojwrHcJohsIr0');
+(7, 'EE2F5A4D86ED6A795BC9AF9EB9D56717', '202CB962AC59075B964B07152D234B70', 'Eber', 'Begazo', 'Baldarrago', 'Dni', '43744482', 'Jiron Junin 455', 'Magdalena', 'Lima', 'Eber', 'ebrych@gmail.com', 2, 'Hy28g4tMpYXTAt7kzP');
 
 -- --------------------------------------------------------
 
@@ -263,6 +276,12 @@ ALTER TABLE `tbl_cliente`
   ADD PRIMARY KEY (`CLIENT_ID`);
 
 --
+-- Indices de la tabla `tbl_estado`
+--
+ALTER TABLE `tbl_estado`
+  ADD PRIMARY KEY (`ID_STATUS`);
+
+--
 -- Indices de la tabla `tbl_habitacion`
 --
 ALTER TABLE `tbl_habitacion`
@@ -275,9 +294,9 @@ ALTER TABLE `tbl_habitacion`
 ALTER TABLE `tbl_reserva`
   ADD PRIMARY KEY (`DETAIL_ID`),
   ADD KEY `ADMIN_ID` (`ADMIN_ID`),
-  ADD KEY `CLIENT_ID` (`CLIENT_ID`),
   ADD KEY `ROOM_ID` (`ROOM_ID`),
-  ADD KEY `USER_ID` (`USER_ID`);
+  ADD KEY `USER_ID` (`USER_ID`),
+  ADD KEY `tbl_reserva_ibfk_2` (`CLIENT_ID`);
 
 --
 -- Indices de la tabla `tbl_rol`
@@ -309,10 +328,22 @@ ALTER TABLE `tbl_vista_habitacion`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `tbl_cliente`
+--
+ALTER TABLE `tbl_cliente`
+  MODIFY `CLIENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `tbl_estado`
+--
+ALTER TABLE `tbl_estado`
+  MODIFY `ID_STATUS` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT de la tabla `tbl_reserva`
 --
 ALTER TABLE `tbl_reserva`
-  MODIFY `DETAIL_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `DETAIL_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `tbl_user`
